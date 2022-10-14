@@ -26,5 +26,5 @@ function buildTree(array $items): ?array {
     return $treeTop;
 }
 
-$data = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'input_large.json'));
+$data = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'input_large.json'), true);
 echo json_encode(buildTree($data), JSON_PRETTY_PRINT);
