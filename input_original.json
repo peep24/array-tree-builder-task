@@ -1,0 +1,47 @@
+[
+    {
+        "name": "A",
+        "parent": null,
+        "id": 1
+    },
+    {
+        "name": "B",
+        "parent": "1",
+        "id": 2
+    },
+    {
+        "name": "B1",
+        "parent": "2",
+        "id": 3
+    },
+    {
+        "name": "B2",
+        "parent": "3",
+        "id": 4
+    },
+    {
+        "name": "B3",
+        "parent": "4",
+        "id": 5
+    },
+    {
+        "name": "C",
+        "parent": "1",
+        "id": 6
+    },
+    {
+        "name": "C1",
+        "parent": "6",
+        "id": 7
+    },
+    {
+        "name": "C2",
+        "parent": "7",
+        "id": 8
+    },
+    {
+        "name": "C3",
+        "parent": "8",
+        "id": 9
+    }
+]
