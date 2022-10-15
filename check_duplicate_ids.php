@@ -1,6 +1,6 @@
 <?php
 
-$data = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'input_large.json'), true);
+$data = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'output.json'), true);
 
 /** @var array<int, int> $countById */
 $countById = [];
