@@ -1,25 +1,19 @@
 <?php
 
-$data = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'output.json'), true);
+$data = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'movies_with_array_for_id_parent.json'), true);
 
-/** @var array<int, int> $countById */
-$countById = [];
+$copy = $data;
 
-foreach ($data as $item) {
-    $id = $item['id'];
-    $countById[$id] = ($countById[$id] ?? 0) + 1;
-}
+foreach ($copy as $item) {
+    $filtered = array_filter($data, function($v) use($item) {
+        return $v['id']['id'] == $item['id']['id'] && $v['id']['type'] == $item['id']['type'];
+    });
 
-/** @var array<int, int> $dupeFrequencyRollup */
-$dupeFrequencyRollup = [];
-foreach ($countById as $id => $count) {
-    if ($count < 2) {
-        continue;
+    if(count($filtered) > 1) {
+        echo json_encode($filtered);
     }
 
-    $dupeFrequencyRollup[$count] = ($dupeFrequencyRollup[$count] ?? 0) + 1;
 }
 
-foreach ($dupeFrequencyRollup as $dupeCount => $count) {
-    echo "Found {$dupeCount} duplicates {$count} times\n";
-}
+
+
