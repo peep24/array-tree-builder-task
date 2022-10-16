@@ -1,69 +1,227 @@
-# PHP Array Tree Building
+I have a problem that has been stressing me out for weeks now and i cannot find a clean solution to it that does not involve recursion. 
 
-In reference to [this stack overflow](https://stackoverflow.com/questions/73958367/php-flat-associative-array-into-deeply-nested-array-by-parent-property/) question.
+This is the problem:
+Take a flat array of nested associative arrays and group this into one deeply nested object. The top level of this object will have its parent property as null. 
 
-### Data Checking
+This is my solution but i admit it is far from perfect. I am fairly certain this can be done in a single loop without any recursion, but for the life of me i cannot work it out!
 
-This is my chain of thoughts in checking the data in play, writing as I go.
-This is based on the output that already existed in this repo, I have not regenerated it. 
+```
+//Example single fork
+$data = array(
 
-Taking a random item, checking input to get expectations, then checking that against outputs:
+    //Top of Tree
+    0 => array(
+        "name" => "A",
+        "parent" => null,
+        "id" => 1,
+    ),
 
-- Check of `1899 - The Incredible Hulk"`.
-- Should have parent chain: 
-  - 3 - Singh Is Kinng
-  - 19 - Rize
-  - 987 - Killing Zelda Sparks
-  - 1917 - Elysium
-  - 1569 - Rockstar
-  - 1899 - The Incredible Hulk
-- Should have children:
-  - 1906 - Kurbaan
-  - 1903 - Jayantabhai Ki Luv Story
-- Newfunc output:
-  - Has the required children.
-  - ERROR: Chain fails due to duplicate IDs within input for id `1569`. Three items have this id:
-    - Rockstar
-    - Black
-    - Ata Pata Laapata
+    //B Branch
+    1 => array(
+        "name" => "B",
+        "parent" => "1",
+        "id" => 2,
+    ),
+    2 => array(
+        "name" => "B1",
+        "parent" => "2",
+        "id" => 3,
+    ),
+    3 => array(
+        "name" => "B2",
+        "parent" => "3",
+        "id" => 4,
+    ),
+    4 => array(
+        "name" => "B3",
+        "parent" => "4",
+        "id" => 5,
+    ),
 
-Alright, so from the above check it looks like our input has duplicates which may be causing unexpected issues. Let's write some code to check how widespread this is.
+    //C Branch
+    5 => array(
+        "name" => "C",
+        "parent" => "1",
+        "id" => 6,
+    ),
+    6 => array(
+        "name" => "C1",
+        "parent" => "6",
+        "id" => 7,
+    ),
+    7 => array(
+        "name" => "C2",
+        "parent" => "7",
+        "id" => 8,
+    ),
+    8 => array(
+        "name" => "C3",
+        "parent" => "8",
+        "id" => 9,
+    ),
 
-Created script `check_duplicate_ids.php`:
-
-```bash
-> php check_duplicate_ids.php
-Found 3 duplicates 547 times
-Found 2 duplicates 1139 times
+);
 ```
 
-So, out of the 7216 input items, there may be > 2k dupe ids.
-I'd imagine this is causing issues for both function types.
-
-Also done a quick check of the above data spot-check of `1899` in the oldfunc output, but that ID does not seem to exist at all.
-
-As another very quick cursory test, if all is working well with correct input we can assume that the output should have the same frequency of the string `"id":` since all items should exist and only exist once. Using my text editor find functionality to get counts:
-
-- input_large.json: 7216
-- output_large_newfunc.json: 4903
-- output_large_oldfunc.json: 12505
-
-The lesser count for `newfunc` is expected, since the functions will essentially de-duplicate ids as part of its first loop. What should we expect for `newfunc` taking this into account?:
-
-```txt
-7216 - (1139 + (547 * 2)) = 4983
-total - (2-count-dupes + (3-count-dupes * 2))
-3 count dupes are counted twice only 1/3 of each ID are real, 2/3 are dupes.
+```
+Actual anonymised example
+array:7214 [▼
+  0 => array:3 [▼
+    "name" => ""
+    "parent" => null
+    "id" => 
+  ]
+  1 => array:3 [▼
+    "name" => ""
+    "parent" => 
+    "id" => 
+  ]
+  2 => array:3 [▼
+    "name" => ""
+    "parent" => 
+    "id" => 
+  ]
+  3 => array:3 [▼
+    "name" => ""
+    "parent" => 
+    "id" => 
+  ]
+  4 => array:3 [▼
+    "name" => ""
+    "parent" => 
+    "id" => 
+  ]
+  5 => array:3 [▼
+    "name" => ""
+    "parent" => 
+    "id" => 
+  ]
+  6 => array:3 [▼
+    "name" => ""
+    "parent" => 
+    "id" => 
+  ]
+  7 => array:3 [▼
+    "name" => ""
+    "parent" => 
+    "id" => 
+  ]
+  8 => array:3 [▼
+    "name" => ""
+    "parent" => 
+    "id" => 
+  ]
+  9 => array:3 [▼
+    "name" => ""
+    "parent" => 
+    "id" => 
+  ]
+  10 => array:3 [▼
+    "name" => ""
+    "parent" => 
+    "id" => 
+  ]
 ```
 
-So we're 80 off, which could indicate an issue with the function, or other issues with the input data.
-
-The old func, with 12505 results, is inflating that input number. Might be a side affect of the dupes and its logic, have not traced it through, but from a quick look I see the function uses name in its logic, which is normally risky depending on context, but there are also duplicates for name in this dataset upon ID.
-
-Lets see why the `newfunc` count might be 80 out.  My guess would be items without parents.  Created script `check_no_parents.php`:
-
-```txt
-27 items have no existing parent:
+```
+Another example deeper nesting 
+{
+   "name":"top",
+   "id":xxx,
+   "children":{
+      "second":{
+         "name":"second",
+         "id":xxx,
+         "children":{
+            "Third":{
+               "name":"third",
+               "id":xxx,
+               "children":{
+                  "fourth":{
+                     "name":"fourth",
+                     "id":xxx
+                  }
+               }
+            }
+         }
+      }
+   }
+}
 ```
 
-So that's 26 extra items accounted for. Looking further, some of those then have their own children which would not be in the output, but it gets complex to count/track, but this likely makes up some numbers.
+```
+
+$originalLength = count($data);
+$obj = [];
+while ($originalLength > 0) {
+    foreach ($data as $item) {
+        $name = $item['name'];
+        $parent = $item['parent'];
+
+        $a = isset($obj[$name]) ? $obj[$name] : array('name' => $name, 'id'=>$item['id']);
+
+        if (($parent)) {
+
+            $path = get_nested_path($parent, $obj, array(['']));
+            try {
+                insertItem($obj, $path, $a);
+            } catch (Exception $e) {
+                continue;
+                //echo 'Caught exception: ', $e->getMessage(), "\n";
+            }
+        }
+
+        $obj[$name] = isset($obj[$name]) ? $obj[$name] : $a;
+        $originalLength--;
+    }
+}
+
+echo json_encode($obj['A']);
+```
+
+```
+
+function get_nested_path($parent, $array, $id_path)
+{
+
+    if (is_array($array) && count($array) > 0) {
+
+        foreach ($array as $key => $value) {
+            $temp_path = $id_path;
+
+            array_push($temp_path, $key);
+
+            if ($key == "id" && $value == $parent) {
+                array_shift($temp_path);
+                array_pop($temp_path);
+                return $temp_path;
+            }
+
+            if (is_array($value) && count($value) > 0) {
+                $res_path = get_nested_path(
+                    $parent, $value, $temp_path);
+
+                if ($res_path != null) {
+                    return $res_path;
+                }
+            }
+        }
+    }
+    return null;
+}
+
+function insertItem(&$array, $path, $toInsert)
+{
+    $target = &$array;
+    foreach ($path as $key) {
+        if (array_key_exists($key, $target))
+            $target = &$target[$key];
+        else throw new Exception('Undefined path: ["' . implode('","', $path) . '"]');
+    }
+
+    $target['children'] = isset($target['children']) ? $target['children'] : [];
+    $target['children'][$toInsert['name']] = $toInsert;
+    return $target;
+}
+```
+
