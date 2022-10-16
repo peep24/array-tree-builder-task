@@ -28,5 +28,5 @@ function buildTree(array $items): ?array {
 }
 
 $data = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'movies_with_array_for_id_parent.json'), true);
-// file_put_contents('output.json', json_encode(buildTree($data), JSON_PRETTY_PRINT));
+file_put_contents('output.json', json_encode(buildTree($data), JSON_PRETTY_PRINT));
 echo json_encode(buildTree($data), JSON_PRETTY_PRINT);
