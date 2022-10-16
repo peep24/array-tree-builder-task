@@ -5,8 +5,6 @@ Take a flat array of nested associative arrays and group this into one deeply ne
 
 This is my solution but i admit it is far from perfect. I am fairly certain this can be done in a single loop without any recursion, but for the life of me i cannot work it out!
 
-
-
 ```
 //Example single fork
 $data = array(
@@ -226,3 +224,4 @@ function insertItem(&$array, $path, $toInsert)
     return $target;
 }
 ```
+
