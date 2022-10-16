@@ -1,23 +1,26 @@
 <?php
 
-$data = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'fixed_data.json'), true);
+$data = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'movies_with_array_for_id_parent.json'), true);
 
-/** @var array<int, bool> $idMap */
-$idMap = [];
+$copy = $data;
 
-foreach ($data as $item) {
-    $id = $item['type'] . $item['id'];
-    $idMap[$id] = true;
-}
+foreach ($copy as $item) {
 
-$noParentIds = [];
-foreach ($data as $item) {
-    $parentId = $item['parent'];
-    if (!isset($idMap[$parentId])) {
-        $noParentIds[] = $item['type'] . $item['id'];
+    if(is_null($item['parent'])){
+        continue;
+    } else {
+        $filtered = array_filter($data, function($v) use($item) {
+            return $v['id']['id'] == $item['parent']['id'] && $v['id']['type'] == $item['parent']['type'];
+        });
+
+        // echo json_encode($filtered) . "\n";
+        // echo "\n";
+
+        if(!$filtered) {
+            echo json_encode($item) . "\n";;
+        }
     }
-}
 
-$noParentCount = count($noParentIds);
-echo "{$noParentCount} items have no existing parent. First 25:\n";
-echo implode("\n", array_slice($noParentIds, 0, 25)) . "\n";
+
+
+}
