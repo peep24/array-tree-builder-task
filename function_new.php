@@ -5,9 +5,9 @@ function buildTree(array $items): ?array {
     // Get a mapping of each item by ID, and pre-prepare the "children" property.
     $idMap = [];
     foreach ($items as $item) {
-        $id = $item['id']['id'];
-        $idMap[$id ] = $item;
-        $idMap[$id ]['children'] = [];
+        $id = $item['id']['type'] . ':' . $item['id']['id'];
+        $idMap[$id] = $item;
+        $idMap[$id]['children'] = [];
     }
 
     // Store a reference to the treetop if we come across it.
@@ -15,8 +15,9 @@ function buildTree(array $items): ?array {
 
     // Map items to their parents' children array.
     foreach ($idMap as $id => $item) {
-        if ($item['parent'] && isset($idMap[$item['parent']['id']])) {
-            $parent = &$idMap[$item['parent']['id']];
+        $parentId = ($item['parent']['type'] ?? '') . ':' . ($item['parent']['id'] ?? '');
+        if ($item['parent'] && isset($idMap[$parentId])) {
+            $parent = &$idMap[$parentId];
             $parent['children'][] = &$idMap[$id];
         } else if ($item['parent'] === null) {
             $treeTop = &$idMap[$id];
