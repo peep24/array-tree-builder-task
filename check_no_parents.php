@@ -13,9 +13,6 @@ foreach ($copy as $item) {
             return $v['id']['id'] == $item['parent']['id'] && $v['id']['type'] == $item['parent']['type'];
         });
 
-        // echo json_encode($filtered) . "\n";
-        // echo "\n";
-
         if(!$filtered) {
             echo json_encode($item) . "\n";;
         }
