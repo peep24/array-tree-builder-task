@@ -27,4 +27,4 @@ function buildTree(array $items): ?array {
 
 $data = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'fixed_data.json'), true);
 // echo json_encode(buildTree($data), JSON_PRETTY_PRINT);
-file_put_contents('output.json', json_encode(buildTree($data)));
+file_put_contents('output.json', json_encode(buildTree($data), JSON_PRETTY_PRINT));

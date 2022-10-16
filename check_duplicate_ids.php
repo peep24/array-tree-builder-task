@@ -1,12 +1,12 @@
 <?php
 
-$data = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'output.json'), true);
+$data = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'fixed_data.json'), true);
 
 /** @var array<int, int> $countById */
 $countById = [];
 
 foreach ($data as $item) {
-    $id = $item['id'];
+    $id = $item['type'] . $item['id'];
     $countById[$id] = ($countById[$id] ?? 0) + 1;
 }
 
